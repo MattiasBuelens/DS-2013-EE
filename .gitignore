@@ -28,6 +28,17 @@ local.properties
 # PDT-specific
 .buildpath
 
+### NetBeans ###
+nbproject/
+build/
+nbbuild/
+dist/
+nbdist/
+nbactions.xml
+nb-configuration.xml
+build.xml
+build.properties
+
 ### Java ###
 *.class
 
