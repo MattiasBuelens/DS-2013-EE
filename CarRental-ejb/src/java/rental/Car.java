@@ -1,6 +1,7 @@
 package rental;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -15,7 +16,7 @@ public class Car {
      ***************/
     
     public Car(int uid, CarType type) {
-    	this.id = uid;
+        this.id = uid;
         this.type = type;
         this.reservations = new ArrayList<Reservation>();
     }
@@ -23,15 +24,13 @@ public class Car {
     /******
      * ID *
      ******/
-    
     public int getId() {
-    	return id;
+        return id;
     }
-    
+
     /************
      * CAR TYPE *
      ************/
-    
     public CarType getType() {
         return type;
     }
@@ -39,23 +38,38 @@ public class Car {
     /****************
      * RESERVATIONS *
      ****************/
-
     public boolean isAvailable(Date start, Date end) {
-        if(!start.before(end))
+        if (!start.before(end)) {
             throw new IllegalArgumentException("Illegal given period");
+        }
 
-        for(Reservation reservation : reservations) {
-            if(reservation.getEndDate().before(start) || reservation.getStartDate().after(end))
+        for (Reservation reservation : reservations) {
+            if (reservation.getEndDate().before(start) || reservation.getStartDate().after(end)) {
                 continue;
+            }
             return false;
         }
         return true;
     }
-    
+
+    public List<Reservation> getReservations() {
+        return Collections.unmodifiableList(reservations);
+    }
+
+    public List<Reservation> getClientReservations(String clientName) {
+        List<Reservation> clientReservations = new ArrayList<Reservation>();
+        for (Reservation reservation : getReservations()) {
+            if (reservation.getCarRenter().equals(clientName)) {
+                clientReservations.add(reservation);
+            }
+        }
+        return clientReservations;
+    }
+
     public void addReservation(Reservation res) {
         reservations.add(res);
     }
-    
+
     public void removeReservation(Reservation reservation) {
         // equals-method for Reservation is required!
         reservations.remove(reservation);
