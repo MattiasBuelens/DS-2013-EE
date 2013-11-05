@@ -24,8 +24,10 @@ public class Main extends AbstractScriptedTripTest<CarRentalSessionRemote, Manag
     }
 
     public static void main(String[] args) throws Exception {
-        //TODO: use updated manager interface to load cars into companies
-        new Main("trips").run();
+        Main main = new Main("trips");
+        main.addCarTypes("Hertz.csv");
+        main.addCarTypes("Dockx.csv");
+        main.run();
     }
     
     private void addCarTypes(String datafile) throws Exception {
