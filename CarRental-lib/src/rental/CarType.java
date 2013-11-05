@@ -1,6 +1,7 @@
 package rental;
 
 import java.io.Serializable;
+import javax.persistence.Id;
 
 public class CarType implements Serializable{
     
@@ -15,6 +16,9 @@ public class CarType implements Serializable{
      * CONSTRUCTOR *
      ***************/
     
+    protected CarType() {
+    }
+    
     public CarType(String name, int nbOfSeats, float trunkSpace, double rentalPricePerDay, boolean smokingAllowed) {
         this.name = name;
         this.nbOfSeats = nbOfSeats;
@@ -23,24 +27,45 @@ public class CarType implements Serializable{
         this.smokingAllowed = smokingAllowed;
     }
 
+    @Id
     public String getName() {
     	return name;
+    }
+    
+    protected void setName(String name) {
+        this.name = name;
     }
     
     public int getNbOfSeats() {
         return nbOfSeats;
     }
     
+    protected void setNbOfSeats(int nbOfSeats) {
+        this.nbOfSeats = nbOfSeats;
+    }
+    
     public boolean isSmokingAllowed() {
         return smokingAllowed;
+    }
+    
+    protected void setSmokingAllowed(boolean smokingAllowed) {
+        this.smokingAllowed = smokingAllowed;
     }
 
     public double getRentalPricePerDay() {
         return rentalPricePerDay;
     }
     
+    protected void setRentalPricePerDay(double rentalPricePerDay) {
+        this.rentalPricePerDay = rentalPricePerDay;
+    }
+    
     public float getTrunkSpace() {
     	return trunkSpace;
+    }
+    
+    protected void setTrunkSpace(float trunkSpace) {
+    	this.trunkSpace = trunkSpace;
     }
     
     /*************
