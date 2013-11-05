@@ -1,23 +1,20 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package session;
 
-import java.util.Collection;
+import java.util.Set;
 import javax.ejb.Remote;
 import rental.CarType;
+import rental.Reservation;
 
-/**
- *
- * @author r0256483
- */
 @Remote
 public interface ManagerSessionRemote {
-
-    Collection<CarType> getCompanyTypes(String carRentalName);
-
-    int getNbCompanyCarTypeReservations(String carRentalName, String carTypeName);
-
-    int getNbClientReservations(String clientName);
+    
+    public Set<CarType> getCarTypes(String company);
+    
+    public Set<Integer> getCars(String company,String type);
+    
+    public Set<Reservation> getReservations(String company, String type, int id);
+    
+    public Set<Reservation> getReservations(String company, String type);
+      
+    public Set<Reservation> getReservationsBy(String renter);
 }

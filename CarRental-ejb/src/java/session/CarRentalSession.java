@@ -1,11 +1,11 @@
 package session;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 import javax.ejb.Stateful;
-import rental.CarRentalCompany;
 import rental.CarType;
 import rental.Quote;
 import rental.RentalStore;
@@ -16,54 +16,58 @@ import rental.ReservationException;
 @Stateful
 public class CarRentalSession implements CarRentalSessionRemote {
 
-    private Set<Quote> currentQuotes = new HashSet<Quote>();
+    private String renter;
+    private List<Quote> quotes = new LinkedList<Quote>();
 
     @Override
     public Set<String> getAllRentalCompanies() {
         return new HashSet<String>(RentalStore.getRentals().keySet());
     }
-
+    
     @Override
-    public Set<String> getAvailableCarTypes(String carRentalName, Date start, Date end) {
-        CarRentalCompany carRental = RentalStore.getRentals().get(carRentalName);
-        Set<String> carTypeNames = new HashSet<String>();
-        for (CarType carType : carRental.getAvailableCarTypes(start, end)) {
-            carTypeNames.add(carType.getName());
+    public List<CarType> getAvailableCarTypes(Date start, Date end) {
+        List<CarType> availableCarTypes = new LinkedList<CarType>();
+        for(String crc : getAllRentalCompanies()) {
+            for(CarType ct : RentalStore.getRentals().get(crc).getAvailableCarTypes(start, end)) {
+                if(!availableCarTypes.contains(ct))
+                    availableCarTypes.add(ct);
+            }
         }
-        return carTypeNames;
+        return availableCarTypes;
     }
 
     @Override
-    public Quote createQuote(ReservationConstraints constraints, String client, String carRentalName) throws ReservationException {
-        CarRentalCompany carRental = RentalStore.getRentals().get(carRentalName);
-        Quote quote = carRental.createQuote(constraints, client);
-        currentQuotes.add(quote);
-        return quote;
+    public Quote createQuote(String company, ReservationConstraints constraints) throws ReservationException {
+        Quote out = RentalStore.getRental(company).createQuote(constraints, renter);
+        quotes.add(out);
+        return out;
     }
 
     @Override
-    public Set<Quote> getCurrentQuotes() {
-        return Collections.unmodifiableSet(currentQuotes);
+    public List<Quote> getCurrentQuotes() {
+        return quotes;
     }
 
     @Override
-    public void confirmQuotes() throws ReservationException {
-        Set<Reservation> reservations = new HashSet<Reservation>();
+    public List<Reservation> confirmQuotes() throws ReservationException {
+        List<Reservation> done = new LinkedList<Reservation>();
         try {
-            for (Quote quote : getCurrentQuotes()) {
-                CarRentalCompany carRental = RentalStore.getRentals().get(quote.getRentalCompany());
-                Reservation reservation = carRental.confirmQuote(quote);
-                reservations.add(reservation);
+            for (Quote quote : quotes) {
+                done.add(RentalStore.getRental(quote.getRentalCompany()).confirmQuote(quote));
             }
-            currentQuotes.clear();
         } catch (ReservationException e) {
-            // Roll back
-            for (Reservation reservation : reservations) {
-                CarRentalCompany carRental = RentalStore.getRentals().get(reservation.getRentalCompany());
-                carRental.cancelReservation(reservation);
-            }
-            // Rethrow
+            for(Reservation r:done)
+                RentalStore.getRental(r.getRentalCompany()).cancelReservation(r);
             throw e;
         }
+        return done;
+    }
+
+    @Override
+    public void setRenterName(String name) {
+        if (renter != null) {
+            throw new IllegalStateException("name already set");
+        }
+        renter = name;
     }
 }

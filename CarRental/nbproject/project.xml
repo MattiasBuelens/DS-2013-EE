@@ -12,7 +12,7 @@
                     <path-in-war>/</path-in-war>
                 </library>
                 <library>
-                    <file>${reference.CarRental-ejb-1.dist-ear}</file>
+                    <file>${reference.CarRental-ejb.dist}</file>
                     <path-in-war>/</path-in-war>
                 </library>
             </web-module-additional-libraries>
@@ -27,12 +27,12 @@
                 <id>j2ee-module-car</id>
             </reference>
             <reference>
-                <foreign-project>CarRental-ejb-1</foreign-project>
-                <artifact-type>j2ee_ear_archive</artifact-type>
+                <foreign-project>CarRental-ejb</foreign-project>
+                <artifact-type>jar</artifact-type>
                 <script>build.xml</script>
-                <target>dist-ear</target>
-                <clean-target>clean-ear</clean-target>
-                <id>dist-ear</id>
+                <target>dist</target>
+                <clean-target>clean</clean-target>
+                <id>dist</id>
             </reference>
             <reference>
                 <foreign-project>CarRental-lib</foreign-project>

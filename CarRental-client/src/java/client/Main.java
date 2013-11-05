@@ -3,63 +3,61 @@ package client;
 import java.util.Date;
 import java.util.Set;
 import javax.naming.InitialContext;
+import rental.CarType;
+import rental.Reservation;
 import rental.ReservationConstraints;
 import session.CarRentalSessionRemote;
 import session.ManagerSessionRemote;
 
-public class Main extends AbstractScriptedSimpleTripTest<CarRentalSessionRemote, ManagerSessionRemote> {
+public class Main extends AbstractScriptedTripTest<CarRentalSessionRemote, ManagerSessionRemote> {
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) throws Exception {
-        String scriptFile = args.length > 0 ? args[0] : "simpleTrips";
-        new Main(scriptFile).run();
-    }
-    
     public Main(String scriptFile) {
         super(scriptFile);
     }
 
+    public static void main(String[] args) throws Exception {
+        //TODO: use updated manager interface to load cars into companies
+        new Main("trips").run();
+    }
+    
     @Override
     protected CarRentalSessionRemote getNewReservationSession(String name) throws Exception {
-        InitialContext context = new InitialContext();
-        return (CarRentalSessionRemote) context.lookup(CarRentalSessionRemote.class.getName());
+        CarRentalSessionRemote out = (CarRentalSessionRemote) new InitialContext().lookup(CarRentalSessionRemote.class.getName());
+        out.setRenterName(name);
+        return out;
     }
 
     @Override
     protected ManagerSessionRemote getNewManagerSession(String name, String carRentalName) throws Exception {
-        InitialContext context = new InitialContext();
-        return (ManagerSessionRemote) context.lookup(ManagerSessionRemote.class.getName());
+        ManagerSessionRemote out = (ManagerSessionRemote) new InitialContext().lookup(ManagerSessionRemote.class.getName());
+        return out;
     }
-
+    
     @Override
     protected void checkForAvailableCarTypes(CarRentalSessionRemote session, Date start, Date end) throws Exception {
-        System.out.println("Available car types from " + start + " to " + end + ":");
-        for (String carRentalName : session.getAllRentalCompanies()) {
-            Set<String> availableCarTypes = session.getAvailableCarTypes(carRentalName, start, end);
-            System.out.println(" * " + carRentalName + ": " + availableCarTypes);
-        }
+        System.out.println("Available car types between "+start+" and "+end+":");
+        for(CarType ct : session.getAvailableCarTypes(start, end))
+            System.out.println("\t"+ct.toString());
+        System.out.println();
     }
 
     @Override
     protected void addQuoteToSession(CarRentalSessionRemote session, String name, Date start, Date end, String carType, String carRentalName) throws Exception {
-        ReservationConstraints constraints = new ReservationConstraints(start, end, carType);
-        session.createQuote(constraints, name, carRentalName);
+        session.createQuote(carRentalName, new ReservationConstraints(start, end, carType));
     }
 
     @Override
     protected void confirmQuotes(CarRentalSessionRemote session, String name) throws Exception {
         session.confirmQuotes();
     }
-
+    
     @Override
-    protected int getNumberOfReservationsBy(ManagerSessionRemote ms, String clientName) throws Exception {
-        return ms.getNbClientReservations(clientName);
+    protected Set<Reservation> getReservationsBy(ManagerSessionRemote ms, String renterName) throws Exception {
+        return ms.getReservationsBy(renterName);
     }
 
     @Override
-    protected int getNumberOfReservationsForCarType(ManagerSessionRemote ms, String carRentalName, String carType) throws Exception {
-        return ms.getNbCompanyCarTypeReservations(carRentalName, carType);
+    protected int getReservationsForCarType(ManagerSessionRemote ms, String name, String carType) throws Exception {
+        return ms.getReservations(name, carType).size();
     }
 }
