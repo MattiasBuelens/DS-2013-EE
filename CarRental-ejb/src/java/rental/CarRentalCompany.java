@@ -1,5 +1,6 @@
 package rental;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -8,10 +9,16 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 
-public class CarRentalCompany {
+@Entity
+public class CarRentalCompany implements Serializable{
 
     private static Logger logger = Logger.getLogger(CarRentalCompany.class.getName());
+    
     private String name;
     private List<Car> cars;
     private Set<CarType> carTypes = new HashSet<CarType>();
@@ -19,6 +26,9 @@ public class CarRentalCompany {
     /***************
      * CONSTRUCTOR *
      ***************/
+    
+    protected CarRentalCompany() {
+    }
     
     public CarRentalCompany(String name, List<Car> cars) {
         logger.log(Level.INFO, "<{0}> Car Rental Company {0} starting up...", name);
@@ -33,6 +43,7 @@ public class CarRentalCompany {
      * NAME *
      ********/
     
+    @Id
     public String getName() {
         return name;
     }
@@ -44,6 +55,15 @@ public class CarRentalCompany {
     /*************
      * CAR TYPES *
      *************/
+    
+    @ManyToMany
+    protected Set<CarType> getCarTypes() {
+        return carTypes;
+    }
+    
+    protected void setCarTypes(Set<CarType> carTypes) {
+        this.carTypes = carTypes;
+    }
     
     public Collection<CarType> getAllTypes() {
         return carTypes;
@@ -75,6 +95,15 @@ public class CarRentalCompany {
     /*********
      * CARS *
      *********/
+    
+    @OneToMany
+    protected List<Car> getCars() {
+        return cars;
+    }
+    
+    protected void setCars(List<Car> cars) {
+        this.cars = cars;
+    }
     
     public Car getCar(int uid) {
         for (Car car : cars) {
