@@ -13,24 +13,34 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 
 @Entity
-public class CarRentalCompany implements Serializable{
+@NamedQueries({
+    @NamedQuery(
+            name = "findAllCompanies",
+            query = "SELECT c FROM CarRentalCompany c"),
+    @NamedQuery(
+            name = "findAllCompanyNames",
+            query = "SELECT c.name FROM CarRentalCompany c")
+})
+public class CarRentalCompany implements Serializable {
 
-    private static Logger logger = Logger.getLogger(CarRentalCompany.class.getName());
+    private static final Logger logger = Logger.getLogger(CarRentalCompany.class.getName());
     
     private String name;
     private List<Car> cars;
     private Set<CarType> carTypes = new HashSet<CarType>();
 
-    /***************
-     * CONSTRUCTOR *
-     ***************/
-    
+    /**
+     * *************
+     * CONSTRUCTOR * *************
+     */
     protected CarRentalCompany() {
     }
-    
+
     public CarRentalCompany(String name, List<Car> cars) {
         logger.log(Level.INFO, "<{0}> Car Rental Company {0} starting up...", name);
         setName(name);
@@ -40,40 +50,41 @@ public class CarRentalCompany implements Serializable{
         }
     }
 
-    /********
-     * NAME *
-     ********/
-    
+    /**
+     * ******
+     * NAME * ******
+     */
     @Id
     public String getName() {
         return name;
     }
 
-    private void setName(String name) {
+    protected void setName(String name) {
         this.name = name;
     }
 
-    /*************
-     * CAR TYPES *
-     *************/
-    
+    /**
+     * ***********
+     * CAR TYPES * ***********
+     */
     @ManyToMany
     protected Set<CarType> getCarTypes() {
         return carTypes;
     }
-    
+
     protected void setCarTypes(Set<CarType> carTypes) {
         this.carTypes = carTypes;
     }
-    
+
     public Collection<CarType> getAllTypes() {
         return carTypes;
     }
 
     public CarType getType(String carTypeName) {
-        for(CarType type:carTypes){
-            if(type.getName().equals(carTypeName))
+        for (CarType type : carTypes) {
+            if (type.getName().equals(carTypeName)) {
                 return type;
+            }
         }
         throw new IllegalArgumentException("<" + carTypeName + "> No cartype of name " + carTypeName);
     }
@@ -93,19 +104,19 @@ public class CarRentalCompany implements Serializable{
         return availableCarTypes;
     }
 
-    /*********
-     * CARS *
-     *********/
-    
+    /**
+     * *******
+     * CARS * *******
+     */
     @OneToMany(cascade = CascadeType.ALL)
     protected List<Car> getCars() {
         return cars;
     }
-    
+
     protected void setCars(List<Car> cars) {
         this.cars = cars;
     }
-    
+
     public Car getCar(int uid) {
         for (Car car : cars) {
             if (car.getId() == uid) {
@@ -124,8 +135,8 @@ public class CarRentalCompany implements Serializable{
         }
         return out;
     }
-    
-     public Set<Car> getCars(String type) {
+
+    public Set<Car> getCars(String type) {
         Set<Car> out = new HashSet<Car>();
         for (Car car : cars) {
             if (type.equals(car.getType().getName())) {
@@ -144,19 +155,19 @@ public class CarRentalCompany implements Serializable{
         }
         return availableCars;
     }
-    
+
     public void addCar(Car car) {
         cars.add(car);
     }
-    
+
     public void removeCar(Car car) {
         cars.remove(car);
     }
 
-    /****************
-     * RESERVATIONS *
-     ****************/
-    
+    /**
+     * **************
+     * RESERVATIONS * **************
+     */
     public Quote createQuote(ReservationConstraints constraints, String guest)
             throws ReservationException {
         logger.log(Level.INFO, "<{0}> Creating tentative reservation for {1} with constraints {2}",
@@ -198,14 +209,15 @@ public class CarRentalCompany implements Serializable{
         logger.log(Level.INFO, "<{0}> Cancelling reservation {1}", new Object[]{name, res.toString()});
         getCar(res.getCarId()).removeReservation(res);
     }
-    
+
     public Set<Reservation> getReservationsBy(String renter) {
         logger.log(Level.INFO, "<{0}> Retrieving reservations by {1}", new Object[]{name, renter});
         Set<Reservation> out = new HashSet<Reservation>();
-        for(Car c : cars) {
-            for(Reservation r : c.getReservations()) {
-                if(r.getCarRenter().equals(renter))
+        for (Car c : cars) {
+            for (Reservation r : c.getReservations()) {
+                if (r.getCarRenter().equals(renter)) {
                     out.add(r);
+                }
             }
         }
         return out;

@@ -5,56 +5,67 @@ import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
-import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 @Entity
 @IdClass(Reservation.Key.class)
+@NamedQuery(
+        name = "findReservationsBy",
+        query = "SELECT r FROM Reservation r "
+        + "WHERE r.carRenter = :renter")
 public class Reservation extends Quote {
 
     private int carId;
-    
+
     /***************
      * CONSTRUCTOR *
      ***************/
-    
-    protected Reservation(){
+    protected Reservation() {
         // do nothing
     }
 
     public Reservation(Quote quote, int carId) {
-    	super(quote.getCarRenter(), quote.getStartDate(), quote.getEndDate(), 
-    		quote.getRentalCompany(), quote.getCarType(), quote.getRentalPrice());
+        super(quote.getCarRenter(), quote.getStartDate(), quote.getEndDate(),
+                quote.getRentalCompany(), quote.getCarType(), quote.getRentalPrice());
         this.carId = carId;
     }
-    
+
     /******
      * ID *
      ******/
     
+    @Id
     public int getCarId() {
-    	return carId;
+        return carId;
     }
 
     protected void setCarId(int carId) {
         this.carId = carId;
     }
     
+    @Id
+    @Temporal(TemporalType.DATE)
+    @Override
+    public Date getStartDate() {
+        return super.getStartDate();
+    }
+
     /*************
      * TO STRING *
      *************/
-    
     @Override
     public String toString() {
-        return String.format("Reservation for %s from %s to %s at %s\nCar type: %s\tCar: %s\nTotal price: %.2f", 
+        return String.format("Reservation for %s from %s to %s at %s\nCar type: %s\tCar: %s\nTotal price: %.2f",
                 getCarRenter(), getStartDate(), getEndDate(), getRentalCompany(), getCarType(), getCarId(), getRentalPrice());
     }
-    
+
     /*******
      * KEY *
      *******/
-    
-    public static class Key implements Serializable{
-        
+    public static class Key implements Serializable {
+
         private int carId;
         private Date startDate;
 
@@ -65,7 +76,7 @@ public class Reservation extends Quote {
 
         protected Key() {
         }
-        
+
         public int getCarId() {
             return carId;
         }
@@ -107,7 +118,5 @@ public class Reservation extends Quote {
             }
             return true;
         }
-        
     }
-    	
 }

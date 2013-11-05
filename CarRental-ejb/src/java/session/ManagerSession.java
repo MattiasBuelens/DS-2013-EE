@@ -18,8 +18,17 @@ import rental.ReservationException;
 @Stateless
 public class ManagerSession implements ManagerSessionRemote {
 
+    private static final Logger logger = Logger.getLogger(ManagerSession.class.getName());
+    
     @PersistenceContext
     EntityManager em;
+
+    @Override
+    public Set<String> getAllRentalCompanies() {
+        List<String> names = em.createNamedQuery("findAllCompanyNames", String.class)
+                .getResultList();
+        return new HashSet<String>(names);
+    }
 
     @Override
     public Set<CarType> getCarTypes(String companyName) {
@@ -27,7 +36,7 @@ public class ManagerSession implements ManagerSessionRemote {
             CarRentalCompany company = getCompany(companyName);
             return new HashSet<CarType>(company.getAllTypes());
         } catch (ReservationException ex) {
-            Logger.getLogger(ManagerSession.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
             return null;
         }
     }
@@ -42,7 +51,7 @@ public class ManagerSession implements ManagerSessionRemote {
             }
             return out;
         } catch (ReservationException ex) {
-            Logger.getLogger(ManagerSession.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
             return null;
         }
     }
@@ -53,7 +62,7 @@ public class ManagerSession implements ManagerSessionRemote {
             CarRentalCompany company = getCompany(companyName);
             return company.getCar(id).getReservations();
         } catch (ReservationException ex) {
-            Logger.getLogger(ManagerSession.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
             return null;
         }
     }
@@ -68,21 +77,17 @@ public class ManagerSession implements ManagerSessionRemote {
             }
             return out;
         } catch (ReservationException ex) {
-            Logger.getLogger(ManagerSession.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
             return null;
         }
     }
 
     @Override
     public Set<Reservation> getReservationsBy(String renter) {
-        List<CarRentalCompany> companies = em.createQuery(
-                "SELECT c FROM CarRentalCompany c", CarRentalCompany.class)
+        List<Reservation> out = em.createNamedQuery("findReservationsBy", Reservation.class)
+                .setParameter("renter", renter)
                 .getResultList();
-        Set<Reservation> out = new HashSet<Reservation>();
-        for (CarRentalCompany crc : companies) {
-            out.addAll(crc.getReservationsBy(renter));
-        }
-        return out;
+        return new HashSet<Reservation>(out);
     }
 
     @Override
@@ -105,7 +110,7 @@ public class ManagerSession implements ManagerSessionRemote {
             ownerCompany.addCar(car);
             em.persist(ownerCompany);
         } catch (ReservationException ex) {
-            Logger.getLogger(ManagerSession.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
         }
     }
 

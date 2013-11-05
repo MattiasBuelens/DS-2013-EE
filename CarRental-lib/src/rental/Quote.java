@@ -4,13 +4,12 @@ import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 @MappedSuperclass
 public class Quote implements Serializable {
     
-    @Temporal(javax.persistence.TemporalType.DATE)
     private Date startDate;
-    @Temporal(javax.persistence.TemporalType.DATE)
     private Date endDate;
     private String carRenter;
     private String rentalCompany;
@@ -34,48 +33,50 @@ public class Quote implements Serializable {
         this.rentalPrice = rentalPrice;
     }
     
+    @Temporal(TemporalType.DATE)
     public Date getStartDate() {
         return startDate;
-    }
-
-    public Date getEndDate() {
-        return endDate;
-    }
-
-    public String getCarRenter() {
-        return carRenter;
-    }
-
-    public String getRentalCompany() {
-        return rentalCompany;
-    }
-
-    public double getRentalPrice() {
-        return rentalPrice;
-    }
-    
-    public String getCarType() {
-	return carType;
     }
     
     protected void setStartDate(Date startDate) {
         this.startDate = startDate;
     }
 
+    @Temporal(TemporalType.DATE)
+    public Date getEndDate() {
+        return endDate;
+    }
+
     protected void setEndDate(Date endDate) {
         this.endDate = endDate;
+    }
+
+    public String getCarRenter() {
+        return carRenter;
     }
 
     protected void setCarRenter(String carRenter) {
         this.carRenter = carRenter;
     }
 
+    public String getRentalCompany() {
+        return rentalCompany;
+    }
+
     protected void setRentalCompany(String rentalCompany) {
         this.rentalCompany = rentalCompany;
+    }
+    
+    public String getCarType() {
+	return carType;
     }
 
     protected void setCarType(String carType) {
         this.carType = carType;
+    }
+
+    public double getRentalPrice() {
+        return rentalPrice;
     }
 
     protected void setRentalPrice(double rentalPrice) {

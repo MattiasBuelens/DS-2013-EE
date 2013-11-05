@@ -25,16 +25,14 @@ public class CarRentalSession implements CarRentalSessionRemote {
 
     @Override
     public Set<String> getAllRentalCompanies() {
-        List<String> names = em.createQuery(
-                "SELECT c.name FROM CarRentalCompany c", String.class)
+        List<String> names = em.createNamedQuery("findAllCompanyNames", String.class)
                 .getResultList();
         return new HashSet<String>(names);
     }
 
     @Override
     public List<CarType> getAvailableCarTypes(Date start, Date end) {
-        List<CarRentalCompany> companies = em.createQuery(
-                "SELECT c FROM CarRentalCompany c", CarRentalCompany.class)
+        List<CarRentalCompany> companies = em.createNamedQuery("findAllCompanies", CarRentalCompany.class)
                 .getResultList();
 
         List<CarType> availableCarTypes = new LinkedList<CarType>();
