@@ -76,7 +76,7 @@ public class ManagerSession implements ManagerSessionRemote {
     @Override
     public Set<Reservation> getReservationsBy(String renter) {
         List<CarRentalCompany> companies = em.createQuery(
-                "SELECT comp FROM Company comp", CarRentalCompany.class)
+                "SELECT c FROM CarRentalCompany c", CarRentalCompany.class)
                 .getResultList();
         Set<Reservation> out = new HashSet<Reservation>();
         for(CarRentalCompany crc : companies) {
