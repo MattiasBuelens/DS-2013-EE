@@ -17,4 +17,11 @@ public interface ManagerSessionRemote {
     public Set<Reservation> getReservations(String company, String type);
       
     public Set<Reservation> getReservationsBy(String renter);
+    
+    public void addCompany(String company);
+    
+    public void addCarType(CarType carType);
+    
+    public void addCar(CarType carType, String ownerCompany);
+    
 }

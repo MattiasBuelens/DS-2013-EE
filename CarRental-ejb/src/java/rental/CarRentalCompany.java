@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
@@ -96,7 +97,7 @@ public class CarRentalCompany implements Serializable{
      * CARS *
      *********/
     
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     protected List<Car> getCars() {
         return cars;
     }
@@ -142,6 +143,14 @@ public class CarRentalCompany implements Serializable{
             }
         }
         return availableCars;
+    }
+    
+    public void addCar(Car car) {
+        cars.add(car);
+    }
+    
+    public void removeCar(Car car) {
+        cars.remove(car);
     }
 
     /****************
