@@ -3,7 +3,9 @@ package client;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.FileSystems;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -26,15 +28,32 @@ public class Main extends AbstractScriptedTripTest<CarRentalSessionRemote, Manag
         new Main("trips").run();
     }
     
-    public static List<Car> loadData(String datafile)
+    private void addCarTypes(String datafile) throws Exception {
+        String companyName = getCompanyName(datafile);
+        List<CarType> carTypes = loadCarTypes(datafile);
+        Set<CarType> uniqueCarTypes = new HashSet<CarType>(carTypes);
+        
+        ManagerSessionRemote session = getNewManagerSession("CarAdder", companyName);
+        for(CarType type : uniqueCarTypes) {
+            session.addCarType(type);
+        }
+        for(CarType type : carTypes) {
+            session.addCar(type.getName(), companyName);
+        }
+    }
+    
+    private String getCompanyName(String datafile) {
+        String fileName = FileSystems.getDefault().getPath(datafile).getFileName().toString();
+        return fileName.substring(0, fileName.lastIndexOf('.'));
+    }
+    
+    private static List<CarType> loadCarTypes(String datafile)
             throws NumberFormatException, IOException {
+        List<CarType> types = new LinkedList<CarType>();
 
-        List<Car> cars = new LinkedList<Car>();
-
-        int nextuid = 0;
-
+        InputStreamReader streamReader = new InputStreamReader(Main.class.getClassLoader().getResourceAsStream(datafile));
         //open file from jar
-        BufferedReader in = new BufferedReader(new InputStreamReader(RentalStore.class.getClassLoader().getResourceAsStream(datafile)));
+        BufferedReader in = new BufferedReader(streamReader);
         //while next line exists
         while (in.ready()) {
             //read line
@@ -53,11 +72,11 @@ public class Main extends AbstractScriptedTripTest<CarRentalSessionRemote, Manag
                     Boolean.parseBoolean(csvReader.nextToken()));
             //create N new cars with given type, where N is the 5th field
             for (int i = Integer.parseInt(csvReader.nextToken()); i > 0; i--) {
-                cars.add(new Car(nextuid++, type));
+                types.add(type);
             }
         }
 
-        return cars;
+        return types;
     }
     
     @Override

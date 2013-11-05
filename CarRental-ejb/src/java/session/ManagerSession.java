@@ -97,7 +97,8 @@ public class ManagerSession implements ManagerSessionRemote {
     }
 
     @Override
-    public void addCar(CarType carType, String ownerCompanyName) {
+    public void addCar(String carTypeName, String ownerCompanyName) {
+        CarType carType = em.find(CarType.class, carTypeName);
         Car car = new Car(0, carType);
         CarRentalCompany ownerCompany = em.find(CarRentalCompany.class, ownerCompanyName);
         if(ownerCompany == null) {
