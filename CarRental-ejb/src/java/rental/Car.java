@@ -3,9 +3,12 @@ package rental;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 
+@Entity
 public class Car {
-
+    
     private int id;
     private CarType type;
     private Set<Reservation> reservations;
@@ -19,13 +22,22 @@ public class Car {
         this.type = type;
         this.reservations = new HashSet<Reservation>();
     }
+    
+    protected Car() {
+        // do nothing
+    }
 
     /******
      * ID *
      ******/
     
+    @Id
     public int getId() {
     	return id;
+    }
+
+    protected void setId(int id) {
+        this.id = id;
     }
     
     /************
@@ -34,6 +46,14 @@ public class Car {
     
     public CarType getType() {
         return type;
+    }
+
+    protected void setType(CarType type) {
+        this.type = type;
+    }
+
+    public void setReservations(Set<Reservation> reservations) {
+        this.reservations = reservations;
     }
 
     /****************
