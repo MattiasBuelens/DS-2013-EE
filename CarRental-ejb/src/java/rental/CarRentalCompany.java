@@ -75,7 +75,7 @@ public class CarRentalCompany implements Serializable {
     /*
      * CAR TYPES
      */
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @ManyToMany(cascade = CascadeType.PERSIST)
     protected Set<CarType> getCarTypes() {
         return carTypes;
     }
@@ -112,10 +112,18 @@ public class CarRentalCompany implements Serializable {
         return availableCarTypes;
     }
 
+    public void addCarType(CarType carType) {
+        carTypes.add(carType);
+    }
+
+    public void removeCarType(CarType carType) {
+        carTypes.remove(carType);
+    }
+
     /*
      * CARS
      */
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
     protected List<Car> getCars() {
         return cars;
     }
