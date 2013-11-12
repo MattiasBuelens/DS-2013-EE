@@ -1,8 +1,10 @@
 package rental;
 
 import java.io.Serializable;
+import javax.persistence.Entity;
 import javax.persistence.Id;
 
+@Entity
 public class CarType implements Serializable{
     
     private String name;

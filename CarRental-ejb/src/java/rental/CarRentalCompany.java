@@ -74,7 +74,7 @@ public class CarRentalCompany implements Serializable {
     /*
      * CAR TYPES
      */
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.PERSIST)
     protected Set<CarType> getCarTypes() {
         return carTypes;
     }

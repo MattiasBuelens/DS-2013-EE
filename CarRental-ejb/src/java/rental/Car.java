@@ -50,7 +50,7 @@ public class Car {
      * CAR TYPE *
      ************/
     
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     public CarType getType() {
         return type;
     }
