@@ -24,19 +24,28 @@ import javax.persistence.OneToMany;
             query = "SELECT c FROM CarRentalCompany c"),
     @NamedQuery(
             name = "findAllCompanyNames",
-            query = "SELECT c.name FROM CarRentalCompany c")
+            query = "SELECT c.name FROM CarRentalCompany c"),
+    @NamedQuery(
+            name = "findCarTypesInCompany",
+            query = "SELECT ct FROM CarType ct"
+            + "JOIN CarRentalCompany comp "
+            + "WHERE comp.name = :companyName"),
+    @NamedQuery(
+            name = "findCarIdsInCompany",
+            query = "SELECT car.id FROM Car car "
+            + "JOIN CarRentalCompany comp "
+            + "WHERE comp.name = :companyName "
+            + "AND car.type = :carTypeName")
 })
 public class CarRentalCompany implements Serializable {
 
     private static final Logger logger = Logger.getLogger(CarRentalCompany.class.getName());
-    
     private String name;
     private List<Car> cars;
     private Set<CarType> carTypes = new HashSet<CarType>();
 
-    /**
-     * *************
-     * CONSTRUCTOR * *************
+    /*
+     * CONSTRUCTOR
      */
     protected CarRentalCompany() {
     }
@@ -50,9 +59,8 @@ public class CarRentalCompany implements Serializable {
         }
     }
 
-    /**
-     * ******
-     * NAME * ******
+    /*
+     * NAME
      */
     @Id
     public String getName() {
@@ -63,9 +71,8 @@ public class CarRentalCompany implements Serializable {
         this.name = name;
     }
 
-    /**
-     * ***********
-     * CAR TYPES * ***********
+    /*
+     * CAR TYPES
      */
     @ManyToMany
     protected Set<CarType> getCarTypes() {
@@ -104,9 +111,8 @@ public class CarRentalCompany implements Serializable {
         return availableCarTypes;
     }
 
-    /**
-     * *******
-     * CARS * *******
+    /*
+     * CARS
      */
     @OneToMany(cascade = CascadeType.ALL)
     protected List<Car> getCars() {
@@ -164,9 +170,8 @@ public class CarRentalCompany implements Serializable {
         cars.remove(car);
     }
 
-    /**
-     * **************
-     * RESERVATIONS * **************
+    /*
+     * RESERVATIONS
      */
     public Quote createQuote(ReservationConstraints constraints, String guest)
             throws ReservationException {

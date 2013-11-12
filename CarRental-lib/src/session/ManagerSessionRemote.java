@@ -24,4 +24,8 @@ public interface ManagerSessionRemote {
     public void addCarType(CarType carType);
 
     public void addCar(String carType, String ownerCompany);
+
+    public String getMostPopularCarRentalCompany();
+
+    public CarType getMostPopularCarTypeIn(String company);
 }
