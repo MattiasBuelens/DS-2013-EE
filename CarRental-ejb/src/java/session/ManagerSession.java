@@ -80,10 +80,10 @@ public class ManagerSession implements ManagerSessionRemote {
 
     @Override
     public void addCarType(CarType carType) {
-//        if (em.find(CarType.class, carType.getName()) == null) {
-//            em.persist(carType);
-//        }
-        em.merge(carType);
+        // Ignore if car type already exists
+        if(em.find(CarType.class, carType.getName()) == null) {
+            em.persist(carType);
+        }
     }
 
     @Override
@@ -111,14 +111,16 @@ public class ManagerSession implements ManagerSessionRemote {
     @Override
     public String getMostPopularCarRentalCompany() {
         return em.createNamedQuery("findCompanyNameWithMostReservations", String.class)
-                .getResultList().get(0);
+                .setMaxResults(1)
+                .getSingleResult();
     }
 
     @Override
     public CarType getMostPopularCarTypeIn(String company) {
         String carTypeName = em.createNamedQuery("findCarTypeNameWithMostReservations", String.class)
                 .setParameter("companyName", company)
-                .getResultList().get(0);
+                .setMaxResults(1)
+                .getSingleResult();
         return em.find(CarType.class, carTypeName);
     }
 }

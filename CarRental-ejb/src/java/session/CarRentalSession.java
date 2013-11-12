@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Set;
 import javax.annotation.Resource;
 import javax.ejb.EJBContext;
-import javax.ejb.SessionContext;
 import javax.ejb.Stateful;
 import javax.ejb.TransactionAttribute;
 import static javax.ejb.TransactionAttributeType.REQUIRED;
