@@ -100,4 +100,17 @@ public class ManagerSession implements ManagerSessionRemote {
         }
         return company;
     }
+
+    @Override
+    public String getMostPopularCarRentalCompany() {
+        return em.createNamedQuery("findCompanyNameWithMostReservations", String.class).getSingleResult();
+    }
+
+    @Override
+    public CarType getMostPopularCarTypeIn(String company) {
+        String carTypeName = em.createNamedQuery("findCarTypeNameWithMostReservations", String.class)
+                .setParameter("companyName", company)
+                .getSingleResult();
+        return em.find(CarType.class, carTypeName);
+    }
 }

@@ -27,7 +27,26 @@ import javax.persistence.TemporalType;
     @NamedQuery(
             name = "findNbReservationsByRenter",
             query = "SELECT COUNT(r) FROM Reservation r "
-            + "WHERE r.carRenter = :renterName")
+            + "WHERE r.carRenter = :renterName"),
+    @NamedQuery(
+            name = "findCompanyNameWithMostReservations",
+            query = "SELECT r.rentalCompany FROM Reservation r "
+            + "GROUP BY r.rentalCompany "
+            + "ORDER BY COUNT(*) DESC "
+            + "LIMIT 1"),
+    @NamedQuery(
+            name = "findCompanyNameWithMostReservations",
+            query = "SELECT r.rentalCompany FROM Reservation r "
+            + "GROUP BY r.rentalCompany "
+            + "ORDER BY COUNT(*) DESC "
+            + "LIMIT 1"),
+    @NamedQuery(
+            name = "findCarTypeNameWithMostReservations",
+            query = "SELECT r.carType FROM Reservation r "
+            + "WHERE r.rentalCompany = :companyName "
+            + "GROUP BY r.carType "
+            + "ORDER BY COUNT(*) DESC "
+            + "LIMIT 1")
 })
 public class Reservation extends Quote {
 
