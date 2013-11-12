@@ -12,7 +12,6 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import javax.naming.InitialContext;
 import rental.CarType;
-import rental.Reservation;
 import rental.ReservationConstraints;
 import session.CarRentalSessionRemote;
 import session.ManagerSessionRemote;
@@ -29,26 +28,26 @@ public class Main extends AbstractScriptedTripTest<CarRentalSessionRemote, Manag
         main.addCarTypes("Dockx.csv");
         main.run();
     }
-    
+
     private void addCarTypes(String datafile) throws Exception {
         String companyName = getCompanyName(datafile);
         List<CarType> carTypes = loadCarTypes(datafile);
         Set<CarType> uniqueCarTypes = new HashSet<CarType>(carTypes);
-        
+
         ManagerSessionRemote session = getNewManagerSession("CarAdder", companyName);
-        for(CarType type : uniqueCarTypes) {
+        for (CarType type : uniqueCarTypes) {
             session.addCarType(type);
         }
-        for(CarType type : carTypes) {
+        for (CarType type : carTypes) {
             session.addCar(type.getName(), companyName);
         }
     }
-    
+
     private String getCompanyName(String datafile) {
         String fileName = FileSystems.getDefault().getPath(datafile).getFileName().toString();
         return fileName.substring(0, fileName.lastIndexOf('.'));
     }
-    
+
     private static List<CarType> loadCarTypes(String datafile)
             throws NumberFormatException, IOException {
         List<CarType> types = new LinkedList<CarType>();
@@ -80,7 +79,7 @@ public class Main extends AbstractScriptedTripTest<CarRentalSessionRemote, Manag
 
         return types;
     }
-    
+
     @Override
     protected CarRentalSessionRemote getNewReservationSession(String name) throws Exception {
         CarRentalSessionRemote out = (CarRentalSessionRemote) new InitialContext().lookup(CarRentalSessionRemote.class.getName());
@@ -93,12 +92,13 @@ public class Main extends AbstractScriptedTripTest<CarRentalSessionRemote, Manag
         ManagerSessionRemote out = (ManagerSessionRemote) new InitialContext().lookup(ManagerSessionRemote.class.getName());
         return out;
     }
-    
+
     @Override
     protected void checkForAvailableCarTypes(CarRentalSessionRemote session, Date start, Date end) throws Exception {
-        System.out.println("Available car types between "+start+" and "+end+":");
-        for(CarType ct : session.getAvailableCarTypes(start, end))
-            System.out.println("\t"+ct.toString());
+        System.out.println("Available car types between " + start + " and " + end + ":");
+        for (CarType ct : session.getAvailableCarTypes(start, end)) {
+            System.out.println("\t" + ct.toString());
+        }
         System.out.println();
     }
 
@@ -111,14 +111,26 @@ public class Main extends AbstractScriptedTripTest<CarRentalSessionRemote, Manag
     protected void confirmQuotes(CarRentalSessionRemote session, String name) throws Exception {
         session.confirmQuotes();
     }
-    
+
     @Override
-    protected Set<Reservation> getReservationsBy(ManagerSessionRemote ms, String renterName) throws Exception {
-        return ms.getReservationsBy(renterName);
+    protected int getNumberOfReservationsBy(ManagerSessionRemote ms, String renterName) throws Exception {
+        return ms.getNumberOfReservationsBy(renterName);
     }
 
     @Override
-    protected int getReservationsForCarType(ManagerSessionRemote ms, String name, String carType) throws Exception {
-        return ms.getReservations(name, carType).size();
+    protected int getNumberOfReservationsForCarType(ManagerSessionRemote ms, String name, String carType) throws Exception {
+        return ms.getNumberOfReservations(name, carType);
+    }
+
+    @Override
+    protected String getMostPopularCarRentalCompany(ManagerSessionRemote ms) throws Exception {
+        System.err.println("To be implemented.");
+        return null;
+    }
+
+    @Override
+    protected CarType getMostPopularCarTypeIn(ManagerSessionRemote ms, String carRentalCompanyName) throws Exception {
+        System.err.println("To be implemented.");
+        return null;
     }
 }
