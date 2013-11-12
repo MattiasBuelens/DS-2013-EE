@@ -15,14 +15,14 @@ import javax.persistence.TemporalType;
 @NamedQueries({
     @NamedQuery(
             name = "findNbReservationsForCar",
-            query = "SELECT COUNT(r) FROM Reservation r"
-            + "WHERE r.rentalCompany :companyName "
-            + "AND r.carType = :carTypeName"
+            query = "SELECT COUNT(r) FROM Reservation r "
+            + "WHERE r.rentalCompany = :companyName "
+            + "AND r.carType = :carTypeName "
             + "AND r.carId = :carId"),
     @NamedQuery(
             name = "findNbReservationsForCarType",
-            query = "SELECT COUNT(r) FROM Reservation r"
-            + "WHERE r.rentalCompany :companyName "
+            query = "SELECT COUNT(r) FROM Reservation r "
+            + "WHERE r.rentalCompany = :companyName "
             + "AND r.carType = :carTypeName"),
     @NamedQuery(
             name = "findNbReservationsByRenter",
@@ -30,23 +30,15 @@ import javax.persistence.TemporalType;
             + "WHERE r.carRenter = :renterName"),
     @NamedQuery(
             name = "findCompanyNameWithMostReservations",
-            query = "SELECT r.rentalCompany FROM Reservation r "
+            query = "SELECT r.rentalCompany, COUNT(r) AS cnt FROM Reservation r "
             + "GROUP BY r.rentalCompany "
-            + "ORDER BY COUNT(*) DESC "
-            + "LIMIT 1"),
-    @NamedQuery(
-            name = "findCompanyNameWithMostReservations",
-            query = "SELECT r.rentalCompany FROM Reservation r "
-            + "GROUP BY r.rentalCompany "
-            + "ORDER BY COUNT(*) DESC "
-            + "LIMIT 1"),
+            + "ORDER BY cnt DESC"),
     @NamedQuery(
             name = "findCarTypeNameWithMostReservations",
-            query = "SELECT r.carType FROM Reservation r "
+            query = "SELECT r.carType, COUNT(r) AS cnt FROM Reservation r "
             + "WHERE r.rentalCompany = :companyName "
             + "GROUP BY r.carType "
-            + "ORDER BY COUNT(*) DESC "
-            + "LIMIT 1")
+            + "ORDER BY cnt DESC")
 })
 public class Reservation extends Quote {
 

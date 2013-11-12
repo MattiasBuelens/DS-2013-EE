@@ -40,26 +40,29 @@ public class ManagerSession implements ManagerSessionRemote {
 
     @Override
     public int getNumberOfReservations(String company, String type, int id) {
-        return em.createNamedQuery("findNbReservationsForCar", Integer.class)
+        long count = em.createNamedQuery("findNbReservationsForCar", Long.class)
                 .setParameter("companyName", company)
                 .setParameter("carTypeName", type)
                 .setParameter("carId", id)
                 .getSingleResult();
+        return (int) count;
     }
 
     @Override
     public int getNumberOfReservations(String company, String type) {
-        return em.createNamedQuery("findNbReservationsForCarType", Integer.class)
+        long count = em.createNamedQuery("findNbReservationsForCarType", Long.class)
                 .setParameter("companyName", company)
                 .setParameter("carTypeName", type)
                 .getSingleResult();
+        return (int) count;
     }
 
     @Override
     public int getNumberOfReservationsBy(String renter) {
-        return em.createNamedQuery("findNbReservationsByRenter", Integer.class)
+        long count = em.createNamedQuery("findNbReservationsByRenter", Long.class)
                 .setParameter("renterName", renter)
                 .getSingleResult();
+        return (int) count;
     }
 
     @Override
@@ -77,7 +80,9 @@ public class ManagerSession implements ManagerSessionRemote {
 
     @Override
     public void addCarType(CarType carType) {
-        em.persist(carType);
+        if (em.find(CarType.class, carType.getName()) == null) {
+            em.persist(carType);
+        }
     }
 
     @Override

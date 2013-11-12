@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
@@ -27,7 +28,7 @@ import javax.persistence.OneToMany;
             query = "SELECT c.name FROM CarRentalCompany c"),
     @NamedQuery(
             name = "findCarTypesInCompany",
-            query = "SELECT ct FROM CarType ct"
+            query = "SELECT ct FROM CarType ct "
             + "JOIN CarRentalCompany comp "
             + "WHERE comp.name = :companyName"),
     @NamedQuery(
@@ -74,7 +75,7 @@ public class CarRentalCompany implements Serializable {
     /*
      * CAR TYPES
      */
-    @ManyToMany(cascade = CascadeType.PERSIST)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     protected Set<CarType> getCarTypes() {
         return carTypes;
     }
@@ -114,7 +115,7 @@ public class CarRentalCompany implements Serializable {
     /*
      * CARS
      */
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     protected List<Car> getCars() {
         return cars;
     }

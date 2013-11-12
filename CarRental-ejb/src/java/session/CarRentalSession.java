@@ -5,8 +5,9 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import javax.ejb.EJB;
+import javax.annotation.Resource;
 import javax.ejb.EJBContext;
+import javax.ejb.SessionContext;
 import javax.ejb.Stateful;
 import javax.ejb.TransactionAttribute;
 import static javax.ejb.TransactionAttributeType.REQUIRED;
@@ -26,9 +27,8 @@ public class CarRentalSession implements CarRentalSessionRemote {
     private List<Quote> quotes = new LinkedList<Quote>();
     @PersistenceContext
     EntityManager em;
-    @EJB
-    private static EJBContext ejbContext;
-    
+    @Resource
+    private EJBContext context;
 
     @Override
     public Set<String> getAllRentalCompanies() {
@@ -77,7 +77,7 @@ public class CarRentalSession implements CarRentalSessionRemote {
                 em.persist(company);
             }
         } catch (ReservationException e) {
-            ejbContext.setRollbackOnly();
+            context.setRollbackOnly();
             throw e;
         }
         return done;

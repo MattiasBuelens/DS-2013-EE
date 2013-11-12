@@ -2,6 +2,7 @@ package client;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.FileSystems;
 import java.util.Date;
@@ -35,6 +36,7 @@ public class Main extends AbstractScriptedTripTest<CarRentalSessionRemote, Manag
         Set<CarType> uniqueCarTypes = new HashSet<CarType>(carTypes);
 
         ManagerSessionRemote session = getNewManagerSession("CarAdder", companyName);
+        session.addCompany(companyName);
         for (CarType type : uniqueCarTypes) {
             session.addCarType(type);
         }
@@ -52,7 +54,8 @@ public class Main extends AbstractScriptedTripTest<CarRentalSessionRemote, Manag
             throws NumberFormatException, IOException {
         List<CarType> types = new LinkedList<CarType>();
 
-        InputStreamReader streamReader = new InputStreamReader(Main.class.getClassLoader().getResourceAsStream(datafile));
+        InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(datafile);
+        InputStreamReader streamReader = new InputStreamReader(stream);
         //open file from jar
         BufferedReader in = new BufferedReader(streamReader);
         //while next line exists
