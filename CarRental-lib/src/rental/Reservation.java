@@ -5,23 +5,37 @@ import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
+import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 @Entity
 @IdClass(Reservation.Key.class)
-@NamedQuery(
-        name = "findReservationsBy",
-        query = "SELECT r FROM Reservation r "
-        + "WHERE r.carRenter = :renter")
+@NamedQueries({
+    @NamedQuery(
+            name = "findNbReservationsForCar",
+            query = "SELECT COUNT(r) FROM Reservation r"
+            + "WHERE r.rentalCompany :companyName "
+            + "AND r.carType = :carTypeName"
+            + "AND r.carId = :carId"),
+    @NamedQuery(
+            name = "findNbReservationsForCarType",
+            query = "SELECT COUNT(r) FROM Reservation r"
+            + "WHERE r.rentalCompany :companyName "
+            + "AND r.carType = :carTypeName"),
+    @NamedQuery(
+            name = "findNbReservationsByRenter",
+            query = "SELECT COUNT(r) FROM Reservation r "
+            + "WHERE r.carRenter = :renterName")
+})
 public class Reservation extends Quote {
 
     private int carId;
 
-    /***************
-     * CONSTRUCTOR *
-     ***************/
+    /*
+     * CONSTRUCTOR
+     */
     protected Reservation() {
         // do nothing
     }
@@ -32,10 +46,9 @@ public class Reservation extends Quote {
         this.carId = carId;
     }
 
-    /******
-     * ID *
-     ******/
-    
+    /*
+     * ID
+     */
     @Id
     public int getCarId() {
         return carId;
@@ -44,7 +57,7 @@ public class Reservation extends Quote {
     protected void setCarId(int carId) {
         this.carId = carId;
     }
-    
+
     @Id
     @Temporal(TemporalType.DATE)
     @Override
@@ -52,18 +65,18 @@ public class Reservation extends Quote {
         return super.getStartDate();
     }
 
-    /*************
-     * TO STRING *
-     *************/
+    /*
+     * TO STRING
+     */
     @Override
     public String toString() {
         return String.format("Reservation for %s from %s to %s at %s\nCar type: %s\tCar: %s\nTotal price: %.2f",
                 getCarRenter(), getStartDate(), getEndDate(), getRentalCompany(), getCarType(), getCarId(), getRentalPrice());
     }
 
-    /*******
-     * KEY *
-     *******/
+    /*
+     * KEY
+     */
     public static class Key implements Serializable {
 
         private int carId;
