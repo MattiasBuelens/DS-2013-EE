@@ -31,14 +31,14 @@ public class CarRentalSession implements CarRentalSessionRemote {
 
     @Override
     public Set<String> getAllRentalCompanies() {
-        List<String> names = em.createNamedQuery("findAllCompanyNames", String.class)
+        List<String> names = em.createNamedQuery("CarRentalCompany.allNames", String.class)
                 .getResultList();
         return new HashSet<String>(names);
     }
 
     @Override
     public List<CarType> getAvailableCarTypes(Date start, Date end) {
-        List<CarRentalCompany> companies = em.createNamedQuery("findAllCompanies", CarRentalCompany.class)
+        List<CarRentalCompany> companies = em.createNamedQuery("CarRentalCompany.all", CarRentalCompany.class)
                 .getResultList();
 
         List<CarType> availableCarTypes = new LinkedList<CarType>();

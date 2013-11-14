@@ -20,17 +20,17 @@ import javax.persistence.OneToMany;
 @Entity
 @NamedQueries({
     @NamedQuery(
-            name = "findAllCompanies",
+            name = "CarRentalCompany.all",
             query = "SELECT c FROM CarRentalCompany c"),
     @NamedQuery(
-            name = "findAllCompanyNames",
+            name = "CarRentalCompany.allNames",
             query = "SELECT c.name FROM CarRentalCompany c"),
     @NamedQuery(
-            name = "findCarTypesInCompany",
+            name = "CarRentalCompany.carTypes",
             query = "SELECT ct FROM CarRentalCompany comp, IN(comp.carTypes) AS ct "
             + "WHERE comp.name = :companyName"),
     @NamedQuery(
-            name = "findCarIdsInCompany",
+            name = "CarRentalCompany.carIds",
             query = "SELECT car.id FROM CarRentalCompany comp, IN(comp.cars) AS car "
             + "WHERE comp.name = :companyName "
             + "AND car.type.name = :carTypeName")

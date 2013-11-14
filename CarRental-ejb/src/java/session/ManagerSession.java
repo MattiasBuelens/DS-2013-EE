@@ -23,7 +23,7 @@ public class ManagerSession implements ManagerSessionRemote {
 
     @Override
     public Set<CarType> getCarTypes(String company) {
-        List<CarType> carTypes = em.createNamedQuery("findCarIdsInCompany", CarType.class)
+        List<CarType> carTypes = em.createNamedQuery("CarRentalCompany.carTypes", CarType.class)
                 .setParameter("companyName", company)
                 .getResultList();
         return new HashSet<CarType>(carTypes);
@@ -31,7 +31,7 @@ public class ManagerSession implements ManagerSessionRemote {
 
     @Override
     public Set<Integer> getCarIds(String company, String type) {
-        List<Integer> ids = em.createNamedQuery("findCarIdsInCompany", Integer.class)
+        List<Integer> ids = em.createNamedQuery("CarRentalCompany.carIds", Integer.class)
                 .setParameter("companyName", company)
                 .setParameter("carTypeName", type)
                 .getResultList();
@@ -40,7 +40,7 @@ public class ManagerSession implements ManagerSessionRemote {
 
     @Override
     public int getNumberOfReservations(String company, String type, int id) {
-        long count = em.createNamedQuery("findNbReservationsForCar", Long.class)
+        long count = em.createNamedQuery("Reservation.countByCar", Long.class)
                 .setParameter("companyName", company)
                 .setParameter("carTypeName", type)
                 .setParameter("carId", id)
@@ -50,7 +50,7 @@ public class ManagerSession implements ManagerSessionRemote {
 
     @Override
     public int getNumberOfReservations(String company, String type) {
-        long count = em.createNamedQuery("findNbReservationsForCarType", Long.class)
+        long count = em.createNamedQuery("Reservation.countByCarType", Long.class)
                 .setParameter("companyName", company)
                 .setParameter("carTypeName", type)
                 .getSingleResult();
@@ -59,7 +59,7 @@ public class ManagerSession implements ManagerSessionRemote {
 
     @Override
     public int getNumberOfReservationsBy(String renter) {
-        long count = em.createNamedQuery("findNbReservationsByRenter", Long.class)
+        long count = em.createNamedQuery("Reservation.countByRenter", Long.class)
                 .setParameter("renterName", renter)
                 .getSingleResult();
         return (int) count;
@@ -67,14 +67,13 @@ public class ManagerSession implements ManagerSessionRemote {
 
     @Override
     public Set<String> getAllRentalCompanies() {
-        List<String> names = em.createNamedQuery("findAllCompanyNames", String.class)
+        List<String> names = em.createNamedQuery("CarRentalCompany.all", String.class)
                 .getResultList();
         return new HashSet<String>(names);
     }
 
     @Override
     public void addCompany(String companyName) {
-        System.out.println("Add company: " + companyName);
         CarRentalCompany company = new CarRentalCompany(companyName, Collections.<Car>emptyList());
         em.persist(company);
     }
@@ -108,14 +107,14 @@ public class ManagerSession implements ManagerSessionRemote {
 
     @Override
     public String getMostPopularCarRentalCompany() {
-        return em.createNamedQuery("findCompanyNameWithMostReservations", String.class)
+        return em.createNamedQuery("Reservation.companyWithMost", String.class)
                 .setMaxResults(1)
                 .getSingleResult();
     }
 
     @Override
     public CarType getMostPopularCarTypeIn(String company) {
-        return em.createNamedQuery("findCarTypeWithMostReservations", CarType.class)
+        return em.createNamedQuery("Reservation.carTypeWithMost", CarType.class)
                 .setParameter("companyName", company)
                 .setMaxResults(1)
                 .getSingleResult();

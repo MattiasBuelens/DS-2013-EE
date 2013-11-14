@@ -16,27 +16,27 @@ import javax.persistence.TemporalType;
 @IdClass(Reservation.Key.class)
 @NamedQueries({
     @NamedQuery(
-            name = "findNbReservationsForCar",
+            name = "Reservation.countByCar",
             query = "SELECT COUNT(r) FROM Reservation r "
             + "WHERE r.rentalCompany = :companyName "
             + "AND r.carType = :carTypeName "
             + "AND r.carId = :carId"),
     @NamedQuery(
-            name = "findNbReservationsForCarType",
+            name = "Reservation.countByCarType",
             query = "SELECT COUNT(r) FROM Reservation r "
             + "WHERE r.rentalCompany = :companyName "
             + "AND r.carType = :carTypeName"),
     @NamedQuery(
-            name = "findNbReservationsByRenter",
+            name = "Reservation.countByRenter",
             query = "SELECT COUNT(r) FROM Reservation r "
             + "WHERE r.carRenter = :renterName"),
     @NamedQuery(
-            name = "findCompanyNameWithMostReservations",
+            name = "Reservation.companyWithMost",
             query = "SELECT r.rentalCompany FROM Reservation r "
             + "GROUP BY r.rentalCompany "
             + "ORDER BY COUNT(r) DESC"),
     @NamedQuery(
-            name = "findCarTypeWithMostReservations",
+            name = "Reservation.carTypeWithMost",
             query = "SELECT c.type FROM Car c, IN(c.reservations) AS r "
             + "WHERE r.rentalCompany = :companyName "
             + "GROUP BY c.type "
