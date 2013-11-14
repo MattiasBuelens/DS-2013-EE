@@ -27,15 +27,13 @@ import javax.persistence.OneToMany;
             query = "SELECT c.name FROM CarRentalCompany c"),
     @NamedQuery(
             name = "findCarTypesInCompany",
-            query = "SELECT ct FROM CarType ct "
-            + "JOIN CarRentalCompany comp "
+            query = "SELECT ct FROM CarRentalCompany comp, IN(comp.carTypes) AS ct "
             + "WHERE comp.name = :companyName"),
     @NamedQuery(
             name = "findCarIdsInCompany",
-            query = "SELECT car.id FROM Car car "
-            + "JOIN CarRentalCompany comp "
+            query = "SELECT car.id FROM CarRentalCompany comp, IN(comp.cars) AS car "
             + "WHERE comp.name = :companyName "
-            + "AND car.type = :carTypeName")
+            + "AND car.type.name = :carTypeName")
 })
 public class CarRentalCompany implements Serializable {
 
@@ -85,6 +83,15 @@ public class CarRentalCompany implements Serializable {
 
     public Collection<CarType> getAllTypes() {
         return carTypes;
+    }
+
+    public boolean hasType(String carTypeName) {
+        for (CarType type : carTypes) {
+            if (type.getName().equals(carTypeName)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public CarType getType(String carTypeName) {

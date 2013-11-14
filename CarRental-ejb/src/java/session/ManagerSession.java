@@ -74,25 +74,23 @@ public class ManagerSession implements ManagerSessionRemote {
 
     @Override
     public void addCompany(String companyName) {
+        System.out.println("Add company: " + companyName);
         CarRentalCompany company = new CarRentalCompany(companyName, Collections.<Car>emptyList());
         em.persist(company);
     }
 
     @Override
-    public void addCarType(CarType carType) {
-        // Ignore if car type already exists
-        if(em.find(CarType.class, carType.getName()) == null) {
-            em.persist(carType);
-        }
-    }
-
-    @Override
-    public void addCar(String carTypeName, String ownerCompanyName) {
+    public void addCar(CarType carType, String ownerCompanyName) {
         try {
-            CarType carType = em.find(CarType.class, carTypeName);
             CarRentalCompany ownerCompany = getCompany(ownerCompanyName);
+            if (ownerCompany.hasType(carType.getName())) {
+                // Already exists, use managed car type
+                carType = ownerCompany.getType(carType.getName());
+            } else {
+                // New car type
+                ownerCompany.addCarType(carType);
+            }
             Car car = new Car(0, carType);
-            ownerCompany.addCarType(carType);
             ownerCompany.addCar(car);
             em.persist(ownerCompany);
         } catch (ReservationException ex) {
@@ -117,10 +115,9 @@ public class ManagerSession implements ManagerSessionRemote {
 
     @Override
     public CarType getMostPopularCarTypeIn(String company) {
-        String carTypeName = em.createNamedQuery("findCarTypeNameWithMostReservations", String.class)
+        return em.createNamedQuery("findCarTypeWithMostReservations", CarType.class)
                 .setParameter("companyName", company)
                 .setMaxResults(1)
                 .getSingleResult();
-        return em.find(CarType.class, carTypeName);
     }
 }

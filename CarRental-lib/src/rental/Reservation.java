@@ -5,8 +5,10 @@ import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -34,10 +36,10 @@ import javax.persistence.TemporalType;
             + "GROUP BY r.rentalCompany "
             + "ORDER BY COUNT(r) DESC"),
     @NamedQuery(
-            name = "findCarTypeNameWithMostReservations",
-            query = "SELECT r.carType FROM Reservation r "
+            name = "findCarTypeWithMostReservations",
+            query = "SELECT c.type FROM Car c, IN(c.reservations) AS r "
             + "WHERE r.rentalCompany = :companyName "
-            + "GROUP BY r.carType "
+            + "GROUP BY c.type "
             + "ORDER BY COUNT(r) DESC")
 })
 public class Reservation extends Quote {

@@ -33,15 +33,11 @@ public class Main extends AbstractScriptedTripTest<CarRentalSessionRemote, Manag
     private void addCarTypes(String datafile) throws Exception {
         String companyName = getCompanyName(datafile);
         List<CarType> carTypes = loadCarTypes(datafile);
-        Set<CarType> uniqueCarTypes = new HashSet<CarType>(carTypes);
 
         ManagerSessionRemote session = getNewManagerSession("CarAdder", companyName);
         session.addCompany(companyName);
-        for (CarType type : uniqueCarTypes) {
-            session.addCarType(type);
-        }
         for (CarType type : carTypes) {
-            session.addCar(type.getName(), companyName);
+            session.addCar(type, companyName);
         }
     }
 
